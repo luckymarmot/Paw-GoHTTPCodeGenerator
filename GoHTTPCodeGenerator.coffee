@@ -17,6 +17,7 @@ GoHTTPCodeGenerator = ->
         } for name, value of url_params_object)
 
         return {
+            "fullpath": request.url
             "base": addslashes (() ->
                 _uri = URI request.url
                 _uri.search("")
@@ -41,7 +42,7 @@ GoHTTPCodeGenerator = ->
         if json_body
             return {
                 "has_json_body":true
-                "json_body_object":@json_body_object json_body, 2
+                "json_body_object": @json_body_object json_body
             }
 
         url_encoded_body = request.urlEncodedBody
@@ -76,27 +77,20 @@ GoHTTPCodeGenerator = ->
                     "has_long_body":true
                 }
 
-    @json_body_object = (object, indent = 0) ->
+    @json_body_object = (object) ->
         if object == null
-            s = "None"
+            s = "null"
         else if typeof(object) == 'string'
             s = "\"#{addslashes object}\""
         else if typeof(object) == 'number'
             s = "#{object}"
         else if typeof(object) == 'boolean'
-            s = "#{if object then "True" else "False"}"
+            s = "#{if object then "true" else "false"}"
         else if typeof(object) == 'object'
-            indent_str = Array(indent + 1).join('    ')
-            indent_str_children = Array(indent + 2).join('    ')
             if object.length?
-                s = "[\n" +
-                    ("#{indent_str_children}#{@json_body_object(value, indent+1)}" for value in object).join(',\n') +
-                    "\n#{indent_str}]"
+                s = '[' + ("#{@json_body_object(value)}" for value in object).join(',') + ']'
             else
-                s = "{\n" +
-                    ("#{indent_str_children}\"#{addslashes key}\": #{@json_body_object(value, indent+1)}" for key, value of object).join(',\n') +
-                    "\n#{indent_str}}"
-
+                s = '{' + ("\"#{addslashes key}\": #{@json_body_object(value)}" for key, value of object).join(',') + '}'
         return s
 
     @generate = (context) ->
