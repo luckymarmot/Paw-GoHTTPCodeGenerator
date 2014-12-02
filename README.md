@@ -4,6 +4,12 @@
 
 This a Paw Extension that generates code for Go using the [HTTP](http://golang.org/pkg/net/http/) package.
 
+## Installation
+
+* `npm install`
+* `cake build`
+* `cake install`
+
 ##License
 
 This Paw Extension is released under the [MIT License](LICENSE). Feel free to fork, and modify!
