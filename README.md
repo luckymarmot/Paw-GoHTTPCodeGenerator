@@ -6,13 +6,19 @@ A [Paw Extension](http://luckymarmot.com/paw/extensions/) that generates [Go](ht
 
 ## Installation
 
+Easily install this Paw Extension: [Install Go Code Generator](http://luckymarmot.com/paw/extensions/GoHTTPCodeGenerator)
+
+## Development
+
+### Build & Install
+
 ```shell
 npm install
 cake build
 cake install
 ```
 
-## Development
+### Watch
 
 During development, watch for changes:
 
