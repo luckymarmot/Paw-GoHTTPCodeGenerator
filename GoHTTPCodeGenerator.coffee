@@ -114,5 +114,6 @@ GoHTTPCodeGenerator.identifier =
 GoHTTPCodeGenerator.title =
     "Go (HTTP)"
 GoHTTPCodeGenerator.fileExtension = "go"
+GoHTTPCodeGenerator.languageHighlighter = "go"
 
 registerCodeGenerator GoHTTPCodeGenerator
