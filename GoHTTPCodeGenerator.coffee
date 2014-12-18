@@ -56,7 +56,7 @@ GoHTTPCodeGenerator = ->
             }
 
         multipart_body = request.multipartBody
-        if multipart_body 
+        if multipart_body
             return {
                 "has_multipart_body":true
                 "multipart_body": ({
@@ -110,8 +110,9 @@ GoHTTPCodeGenerator = ->
 
 
 GoHTTPCodeGenerator.identifier =
-    "com.luckymarmot.PawExtensions.GoHTTPCodeGenerator";
+    "com.luckymarmot.PawExtensions.GoHTTPCodeGenerator"
 GoHTTPCodeGenerator.title =
-    "Go (HTTP)";
+    "Go (HTTP)"
+GoHTTPCodeGenerator.fileExtension = "go"
 
 registerCodeGenerator GoHTTPCodeGenerator
