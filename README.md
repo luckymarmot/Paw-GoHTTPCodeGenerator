@@ -2,13 +2,23 @@
 
 # Go + HTTP Code Generator (Paw Extension)
 
-This a Paw Extension that generates code for Go using the [HTTP](http://golang.org/pkg/net/http/) package.
+A [Paw Extension](http://luckymarmot.com/paw/extensions/) that generates [Go](https://golang.org/) code for the [HTTP](http://golang.org/pkg/net/http/) package.
 
 ## Installation
 
-* `npm install`
-* `cake build`
-* `cake install`
+```shell
+npm install
+cake build
+cake install
+```
+
+## Development
+
+During development, watch for changes:
+
+```shell
+cake watch
+```
 
 ## License
 
