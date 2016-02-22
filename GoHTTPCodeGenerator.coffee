@@ -11,6 +11,17 @@
 addslashes = (str) ->
     ("#{str}").replace(/[\\"]/g, '\\$&')
 
+addBackSlashes = (str) ->
+    ("#{str}").replace(/[\\`]/g, '\\$&')
+
+slugify = (str) ->
+    re = /([a-zA-Z0-9])([a-zA-Z0-9]*)/g
+    l = []
+    while (m = re.exec(str))
+        if (m)
+            l.push(m[1].toUpperCase() + m[2].toLowerCase())
+    return l.join('')
+
 GoHTTPCodeGenerator = ->
 
     @url = (request) ->
@@ -77,7 +88,7 @@ GoHTTPCodeGenerator = ->
             if raw_body.length < 5000
                 return {
                     "has_raw_body":true
-                    "raw_body": addslashes raw_body
+                    "raw_body": addBackSlashes raw_body
                 }
             else
                 return {
@@ -109,6 +120,7 @@ GoHTTPCodeGenerator = ->
             "url": @url request
             "headers": @headers request
             "body": @body request
+            "codeSlug": slugify request.name
 
         template = readFile "go.mustache"
         Mustache.render template, view

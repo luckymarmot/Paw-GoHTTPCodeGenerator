@@ -1,35 +1,39 @@
 package main
 
-import "fmt"
-import "io/ioutil"
-import "net/http"
+import (
+    "fmt"
+    "io/ioutil"
+    "net/http"
 {{#body.has_url_encoded_body}}
-import "net/url"
-import "bytes"
+    "net/url"
+    "bytes"
 {{/body.has_url_encoded_body}}
 {{#body.has_raw_body}}
-import "strings"
+    "strings"
 {{/body.has_raw_body}}
 {{#body.has_long_body}}
-import "strings"
+    "strings"
 {{/body.has_long_body}}
 {{#body.has_multipart_body}}
-import "mime/multipart"
-import "bytes"
+    "mime/multipart"
+    "bytes"
 {{/body.has_multipart_body}}
 {{#body.has_json_body}}
-import "bytes"
+    "bytes"
 {{/body.has_json_body}}
+)
 
-func main() {
+func send{{{codeSlug}}}() {
     // {{{request.name}}} ({{{request.method}}} {{{url.fullpath}}})
-    
+
     {{#body.has_raw_body}}
     body := strings.NewReader(`{{{body.raw_body}}}`)
+
     {{/body.has_raw_body}}
     {{! ----- }}
     {{#body.has_long_body}}
     body := strings.NewReader(`set your body string`)
+
     {{/body.has_long_body}}
     {{! ----- }}
     {{#body.has_url_encoded_body}}
@@ -38,6 +42,7 @@ func main() {
     params.Set("{{{name}}}", "{{{value}}}")
     {{/body.url_encoded_body}}
     body := bytes.NewBufferString(params.Encode())
+
     {{/body.has_url_encoded_body}}
     {{! ----- }}
     {{#body.has_multipart_body}}
@@ -47,55 +52,58 @@ func main() {
     writer.WriteField("{{{name}}}","{{{value}}}")
     {{/body.multipart_body}}
     writer.Close()
+
     {{/body.has_multipart_body}}
     {{! ----- }}
     {{#body.has_json_body}}
     json := []byte(`{{{body.json_body_object}}}`)
     body := bytes.NewBuffer(json)
+
     {{/body.has_json_body}}
-    
     // Create client
     client := &http.Client{}
-  
+
     // Create request
     {{#body}}
     req, err := http.NewRequest("{{{request.method}}}", "{{{url.fullpath}}}", body)
+
     {{/body}}
     {{^body}}
     req, err := http.NewRequest("{{{request.method}}}", "{{{url.fullpath}}}", nil)
-    {{/body}}
 
+    {{/body}}
+    {{! ----- }}
     {{#headers.has_headers}}
+    // Headers
     {{#headers.header_list}}
-    req.Header.Add("{{{header_name}}}", `{{{header_value}}}`)
+    req.Header.Add("{{{header_name}}}", "{{{header_value}}}")
     {{/headers.header_list}}
+
     {{/headers.has_headers}}
     {{! ----- }}
     {{#body.has_multipart_body}}
     req.Header.Add("Content-Type", writer.FormDataContentType())
+
     {{/body.has_multipart_body}}
     {{! ----- }}
-    {{#body.has_json_body}}
-    req.Header.Add("Content-Type", "application/json")
-    {{/body.has_json_body}}
     {{! Read params from url and add them }}
     {{#url.has_params}}
     parseFormErr := req.ParseForm()
     if parseFormErr != nil {
       fmt.Println(parseFormErr)    
     }
+
     {{/url.has_params}}
-  
     // Fetch Request
     resp, err := client.Do(req)
     
     if err != nil {
         fmt.Println("Failure : ", err)
     }
-    
+
     // Read Response Body
     respBody, _ := ioutil.ReadAll(resp.Body)
-    
+
     // Display Results
     fmt.Println("response Status : ", resp.Status)
     fmt.Println("response Headers : ", resp.Header)
