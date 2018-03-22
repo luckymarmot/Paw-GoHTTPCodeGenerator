@@ -101,6 +101,8 @@ func send{{{codeSlug}}}() {
 		fmt.Println("Failure : ", err)
 	}
 
+	defer resp.Body.Close()
+
 	// Read Response Body
 	respBody, _ := ioutil.ReadAll(resp.Body)
 
