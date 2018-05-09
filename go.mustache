@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 {{#body.has_url_encoded_body}}
 	"net/url"
 	"bytes"
@@ -23,7 +24,7 @@ import (
 {{/body.has_json_body}}
 )
 
-func send{{{codeSlug}}}() {
+func send{{{codeSlug}}}() error {
 	// {{{request.name}}} ({{{request.method}}} {{{url.fullpath}}})
 
 	{{#body.has_raw_body}}
@@ -60,16 +61,22 @@ func send{{{codeSlug}}}() {
 	body := bytes.NewBuffer(json)
 
 	{{/body.has_json_body}}
-	// Create client
-	client := &http.Client{}
 
 	// Create request
 	{{#body}}
 	req, err := http.NewRequest("{{{request.method}}}", "{{{url.fullpath}}}", body)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return err
+	}
 
 	{{/body}}
 	{{^body}}
 	req, err := http.NewRequest("{{{request.method}}}", "{{{url.fullpath}}}", nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return err
+	}
 
 	{{/body}}
 	{{! ----- }}
@@ -88,24 +95,31 @@ func send{{{codeSlug}}}() {
 	{{! ----- }}
 	{{! Read params from url and add them }}
 	{{#url.has_params}}
-	parseFormErr := req.ParseForm()
-	if parseFormErr != nil {
-	  fmt.Println(parseFormErr)    
+	if err := req.ParseForm(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return err 
 	}
 
 	{{/url.has_params}}
 	// Fetch Request
-	resp, err := client.Do(req)
-	
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Println("Failure : ", err)
+		fmt.Fprintln(os.Stderr, err)
+		return err
 	}
+	defer resp.Body.Close()
 
 	// Read Response Body
-	respBody, _ := ioutil.ReadAll(resp.Body)
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return err
+	}
 
 	// Display Results
 	fmt.Println("response Status : ", resp.Status)
 	fmt.Println("response Headers : ", resp.Header)
 	fmt.Println("response Body : ", string(respBody))
+
+	return nil
 }
