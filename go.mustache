@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 {{#body.has_url_encoded_body}}
 	"net/url"
@@ -102,7 +102,7 @@ func send{{{codeSlug}}}() {
 	}
 
 	// Read Response Body
-	respBody, _ := ioutil.ReadAll(resp.Body)
+	respBody, _ := io.ReadAll(resp.Body)
 
 	// Display Results
 	fmt.Println("response Status : ", resp.Status)
